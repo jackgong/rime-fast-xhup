@@ -1,4 +1,4 @@
 local hide_words = {
-	["梅爱偲"] = { "macos" },
+	["己酸"] = { "jisr", },
 }
 return hide_words

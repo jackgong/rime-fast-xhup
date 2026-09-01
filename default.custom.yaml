@@ -10,9 +10,9 @@
 patch:
   # 方案列表
   schema_list:
-    - schema: easy_en
-    - schema: flyhe_fast
     - schema: flypy_xhfast
+    - schema: flyhe_fast
+    - schema: easy_en
     - schema: flypy_reverse
   "menu/page_size": 7                       # 候选词个数
   "switcher/fold_options": false            # 呼出时是否折叠，多方案时建议折叠 true ，一个方案建议展开 false

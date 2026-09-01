@@ -46,7 +46,7 @@ patch:
         - 注解类型 ➜ 辅码
         - 注解类型 ➜ 声调
         - 注解类型 ➜ 空白
-      reset: 1
+      reset: 0                          # 默认显示形码(原为 1=声调)
 
   # 输入引擎
   engine/+:
@@ -183,9 +183,12 @@ patch:
         - "@163.com"
         - "@139.com"
 
+  # 注：想让注释显示"音码~形码"完整码需改 lua/flypy_switcher.lua 的 use_mask 分支(约 364 行),
+  # translator/comment_format 在此无效 —— 辅码注释由 lua filter 渲染, 不走 yaml. 暂不做.
+
   speller/+:
     algebra/+:
-      # - derive|/||                  # 取消注释,直接辅码(新手不推荐)
+      - derive|/||                    # 直接辅码(无引导符): 绩=jis/jisr, 歌=ged, 解=jpd
 
       ## 模糊音:
       - derive/^([qx])v/$1u/
