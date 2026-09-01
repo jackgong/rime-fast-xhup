@@ -62,6 +62,22 @@ patch:
   # 注释下行, 以取消中英混合输出上屏时自动添加的前导空格
   # 'engine/processors/@after 1': lua_processor@*word_append_space*processor
 
+  # 三码单字表（音2+形码首位1）——独立 table_translator，不参与音节切分。
+  # 词表由 tools/gen_aux3.py 从 cn_dicts/flypy_chars.dict.yaml 生成。
+  # initial_quality 可调：调高则三码单字更靠前，调低则让位给三码简拼词。
+  # 参照系: 主翻译器 1.3 / free_uses_word 1.5 / easy_en 0.8 / custom_phrase 99(固顶)。
+  # 设 2.0 = 排在主翻译器候选之前。若觉得压住了常用三码简拼词(如 uij→时间), 降到 1.4~1.5。
+  aux3:
+    dictionary: ""
+    db_class: stabledb
+    user_dict: aux3                   # → 根目录 aux3.txt
+    enable_sentence: false
+    enable_completion: false
+    initial_quality: 2.0
+  # 未接线 —— 见上方 speller/+ 注释「曾试过的替代方案 4」。
+  # 需要时取消下行注释, 并把 speller 里的 derive|/|| 注掉。
+  # 'engine/translators/@after last': table_translator@aux3
+
   key_binder/+:
     import_preset: default                    # 从 default.yaml 继承通用的
     fuzz_algebra_first: "8"                   # `8/Control+q` 简拼优先
@@ -188,11 +204,25 @@ patch:
 
   speller/+:
     algebra/+:
-      # - derive|/||                  # 直接辅码(无引导符) —— 2026-09-01 试过后关闭
-      #   原因: 三码派生(uur)会抢占词的切分路径。打「输入法」(词库码 uu ru fa)时,
-      #   uur 被优先解析为「uu + 辅码首位 r」→ 舒/俞/倏, 词被打断。
-      #   更根本的原因: 直接辅码要求边敲边判断"这个字要不要补形码", 需要看屏幕,
-      #   与「盲打 → 唯一 KPI 是首选正确率」冲突。形码只应在有意识消歧时用引导符补。
+      # 直接辅码（无引导符）: 三码和四码单字全码都可直接敲
+      #   djb/jiv/ged → 单/籍/歌   djbl/jisr/gedr → 单/绩/歌
+      #
+      # 已知代价（2026-09-01 评估后接受）:
+      #   三码会成为多音节词的合法前缀。打「输入法」(词库码 uu ru fa) 时,
+      #   中途第 5 码 uuruf 被解析为 uur|uf → 显示「舒神」。
+      #   但**打完整的 uurufa 结果正确**, 而使用者盲打、不看中途候选,
+      #   因此这是显示层的瑕疵, 不是功能缺陷。
+      #   反之关掉它会失去全部三码单字定位能力 —— 代价与收益倒挂。
+      #
+      # 曾试过的替代方案（均失败或不划算, 勿重走）:
+      #   1. abbrev 降权    → 无效。不是权重问题, uur|uf 是"完整解析"而 uu|ru|f 需预测缺失码
+      #   2. 只派生四码     → uuruf 修好了, 但三码单字全丢
+      #   3. 独立 .dict.yaml + flypy_aux3.schema.yaml + schema/dependencies
+      #                     → 编译与加载都成功(日志可证), 但候选始终不出现,
+      #                       疑为本方案 filter 链(cand_selector.lua 等)重建候选列表所致
+      #   4. stabledb 文本表 aux3.txt (仍在仓库中, 未接线; 由 tools/gen_aux3.py 生成)
+      #                     → 未验证; 若某天中途误上屏真的造成困扰, 可启用它并关掉本条 derive
+      - derive|/||
 
       ## 模糊音:
       - derive/^([qx])v/$1u/
