@@ -137,3 +137,14 @@ xkma  →  Tab（光标移到 xk 后）  →  敲 k  ⇒ xkk ma ⇒ 出「形码
   的 `use_mask` 分支（约 364 行）。`translator/comment_format` 在此**无效**
   （辅码注释由 lua filter 渲染，不走 yaml）。
 - **云拼音**：Rime 无原生支持。词库外的长词改用 `` ` `` 造词解决。
+- **额外挂载的 table_translator 候选不出现** —— 已向上游提 issue：
+  [boomker/rime-fast-xhup#137](https://github.com/boomker/rime-fast-xhup/issues/137)
+
+  两条独立路径（`.dict.yaml` + 载体 schema / `stabledb` 文本表）都编译加载成功、
+  候选一个不出；换挂载位置（`@after last` → `@after 6`）也无差别。
+  疑为方案的 filter 链（`lua/cand_selector.lua`）重建候选列表所致，未定位。
+
+  **影响**：想给方案追加自定义 translator 走不通。本仓库的 `aux3.txt` 与
+  `tools/gen_aux3.py` 就是为此准备的三码单字表，目前**未接线**——
+  若 issue 有解，启用 `table_translator@aux3` 并关掉 `speller` 里的 `derive|/||` 即可；
+  若上游确认是设计使然，则 `aux3.txt` 可删（`tools/gen_aux3.py` 一条命令能重新生成）。
