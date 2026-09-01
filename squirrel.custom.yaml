@@ -11,8 +11,8 @@ patch:
   style:
     # layout/max_width: 1200
     # 註: 預設的配色方案及代碼(指定爲 style/color_scheme 系統默認色系 - native)
-    color_scheme: songhe                        # macos明亮主题
-    color_scheme_dark: catppuccin_frappe        # macos黑暗主题
+    color_scheme: claude_light                  # macos明亮主题（灰阶，不干扰打字）
+    color_scheme_dark: claude_dark              # macos黑暗主题（灰阶）
     # color_scheme_dark: catppuccin_macchiato   # macos黑暗主题
 
     show_paging: false
@@ -37,6 +37,37 @@ patch:
 
   # 皮肤主题
   preset_color_schemes:
+    # 灰阶方案（黑白灰，无彩色高亮）—— 目标是不干扰打字
+    # 色值注释里的 #RRGGBB 是人类可读值；Rime 实际用的是 0xBBGGRR 顺序
+
+    claude_light:
+      name: Claude Light
+
+      back_color:                    0xF5F9FA   # #FAF9F5  候选条背景 — 暖白
+      border_color:                  0xE0E6E8   # #E8E6E0  边框 — 极淡，几乎不可见
+      text_color:                    0x81878A   # #8A8781  输入码行 — 灰，不抢眼
+      label_color:                   0xA6ADB0   # #B0ADA6  候选编号 — 更淡
+      candidate_text_color:          0x262A2B   # #2B2A26  候选文字 — 近黑
+      hilited_back_color:            0xE4EBED   # #EDEBE4  首选高亮块 — 仅比底色深一点，无彩色
+      hilited_candidate_text_color:  0x17191A   # #1A1917  首选文字 — 纯黑向
+      hilited_candidate_label_color: 0x92999C   # #9C9992  首选编号
+      hilited_text_color:            0x62686B   # #6B6862  高亮输入码
+      hilited_comment_text_color:    0x9EA5A8   # #A8A59E  高亮注解（形码）
+      comment_text_color:            0xABB2B5   # #B5B2AB  注解（形码）— 最淡，看得见但不干扰
+    claude_dark:
+      name: Claude Dark
+
+      back_color:                    0x242626   # #262624  候选条背景 — 暖深灰
+      border_color:                  0x343738   # #383734  边框
+      text_color:                    0x82878A   # #8A8782  输入码行
+      label_color:                   0x63696B   # #6B6963  候选编号
+      candidate_text_color:          0xDEE4E6   # #E6E4DE  候选文字 — 米白
+      hilited_back_color:            0x36393A   # #3A3936  首选高亮块 — 无彩色
+      hilited_candidate_text_color:  0xF5F9FA   # #FAF9F5  首选文字
+      hilited_candidate_label_color: 0x82878A   # #8A8782  首选编号
+      hilited_text_color:            0xA0A5A8   # #A8A5A0  高亮输入码
+      hilited_comment_text_color:    0x82878A   # #8A8782  高亮注解（形码）
+      comment_text_color:            0x6E7375   # #75736E  注解（形码）— 最淡
     catppuccin_latte:
       name: Catppuccin Latte
 
