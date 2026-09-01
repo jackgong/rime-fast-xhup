@@ -131,6 +131,22 @@ speller/+:
 xkma  →  Tab（光标移到 xk 后）  →  敲 k  ⇒ xkk ma ⇒ 出「形码」
 ```
 
+## 待发的上游 PR（草稿已存，未提交）
+
+分支 **`docs/direct-aux-code-tradeoff`**（在 fork 上，基于 upstream/main，仅 11 行文档改动）
+
+内容：给 README 与 `flypy_xhfast.custom.yaml` 补充 `derive|/||`（直接辅码）的实际取舍
+—— 原文只写"新手不推荐"，未说明代价。本机实测的结论（三码会成为多音节词前缀、
+`uuruf` 被切为 `uur|uf`、abbrev 降权无效）写进了文档。
+
+**为什么没发**：等 issue #137 有回应再说。作者若对 issue 都不回，PR 大概也会沉；
+那这份改动留在自己 fork 里一样有用。
+
+开 PR 的链接：
+https://github.com/jackgong/rime-fast-xhup/pull/new/docs/direct-aux-code-tradeoff
+
+---
+
 ## 已知未解决
 
 - **候选注释只显示形码**，想显示"音码~形码"完整码需改 `lua/flypy_switcher.lua`
