@@ -11,7 +11,7 @@
 | 路径 | 仓库 | 可见性 | 内容 |
 |---|---|---|---|
 | `~/Library/Rime/` | `jackgong/rime-fast-xhup` | public | 方案配置 + 手动词表 |
-| `~/Library/Rime/sync/` | `jackgong/rime-userdb`（待建） | **private** | 自动调频学习成果 |
+| `~/Library/Rime/sync/` | [`jackgong/rime-userdb`](https://github.com/jackgong/rime-userdb) | **private** | 自动调频学习成果（只跟踪 `*.userdb.txt`）|
 | `~/Library/Rime/installation.yaml` | 不进任何仓库 | — | 每台机器独有 |
 
 `sync/` 在外层的 `.gitignore` 里，所以它是一个**嵌套的独立仓库**，两者互不干扰。
@@ -25,7 +25,7 @@ brew install --cask squirrel
 # 2. 配置
 git clone --recursive git@github.com:jackgong/rime-fast-xhup.git ~/Library/Rime
 
-# 3. 学习成果（private）
+# 3. 学习成果（private）—— 已建好，直接 clone
 git clone git@github.com:jackgong/rime-userdb.git ~/Library/Rime/sync
 
 # 4. 改这台机器的标识（重要：别和其他机器重名）
@@ -77,11 +77,20 @@ git add -A && git commit
 git add -A && git commit -m "config: ..." && git push
 ```
 
-`sync/` 要单独提交（它是独立仓库）：
+`sync/` 要单独提交（它是独立仓库）。**先在输入法菜单点「同步用户数据」**，
+它会刷新 `sync/<installation_id>/*.userdb.txt`，然后：
 
 ```bash
-cd sync && git add -A && git commit -m "sync userdb" && git push
+cd ~/Library/Rime/sync && git add -A && git commit -m "sync userdb" && git push
 ```
+
+只有 `*.userdb.txt` 入库（28K）；Rime 一并快照的 33 个配置文件被 `sync/.gitignore` 排除
+—— 那些由本仓库管理，在那边重复且会分叉。
+
+### ⛔ 绝对不要在 `~/Library/Rime` 里跑 `git clean -xfd`
+
+`-x` 会连 gitignored 文件一起删，其中 `*.userdb/`（四个，约 392K）是
+**自动调频的全部学习成果，不可再生**。`build/`（159M）删了无所谓，部署会重建。
 
 ## 我的配置做了什么
 
