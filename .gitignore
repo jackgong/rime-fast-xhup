@@ -21,3 +21,6 @@ lua/.codegraph/
 # lua/pin_word_record.lua
 lua/shortcut_config.lua
 en_dicts/en_custom.dict.yaml
+
+# 移动端方案的生成物（tools/gen_mobile_yinxing.py 可重建）
+mobile/flypy_yinxing.dict.yaml

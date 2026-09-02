@@ -1,0 +1,79 @@
+# 小鹤音形（定长四码）—— 移动端方案，供 iOS 仓输入法 Hamster 使用
+#
+# 设计目标：少选字。定长四码把重码压到接近零（实测 66.6% 的码位唯一候选，
+# 打满四码直接上屏，一次点选都不用）——触屏上最贵的动作就是翻候选、点选择。
+#
+# 刻意不用 lua：Hamster 的方案规范要求少用 lua，且移动端 lua 未充分测试。
+# 所以这里没有词条置顶/降频/逐字辅码那些 Mac 上的功能 —— 手机上也没有 Ctrl+t 可按。
+#
+# 词库由 tools/gen_mobile_yinxing.py 从 cn_dicts/ 生成，字集与权重同 Mac 版一致。
+
+schema:
+  schema_id: flypy_yinxing
+  name: 小鹤音形
+  version: "1.0"
+  author:
+    - 取码规则：小鹤音形官方
+    - 词库来源：boomker/rime-fast-xhup 的 cn_dicts/
+  description: |
+    定长四码音形方案。
+    单字＝双拼2＋鹤形2；二字词＝两字双拼；三字词＝前两字首码＋末字双拼；
+    四字以上＝前三字首码＋末字首码。
+
+switches:
+  - name: ascii_mode
+    reset: 0
+    states: [中文, 英文]
+  - name: ascii_punct
+    reset: 0
+    states: [中文标点, 英文标点]
+  - name: full_shape
+    states: [半角, 全角]
+
+engine:
+  processors:
+    - ascii_composer
+    - recognizer
+    - key_binder
+    - speller
+    - punctuator
+    - selector
+    - navigator
+    - express_editor
+  segmentors:
+    - ascii_segmentor
+    - matcher
+    - abc_segmentor
+    - punct_segmentor
+    - fallback_segmentor
+  translators:
+    - punct_translator
+    - table_translator
+  filters:
+    - uniquifier
+
+speller:
+  alphabet: "abcdefghijklmnopqrstuvwxyz"
+  delimiter: " '"
+  max_code_length: 4          # 定长四码
+  auto_select: true           # 全码唯一时自动上屏 —— 66.6% 的情况下省掉点选
+  auto_clear: max_length
+
+translator:
+  dictionary: flypy_yinxing
+  enable_charset_filter: false
+  enable_sentence: false      # 音形是定长取码，不做整句
+  enable_completion: true     # 前缀补全：打两三码就按权重出候选，等价于简码
+  enable_encoder: true        # 逐字打出来的组合自动记成词
+  encode_commit_history: true
+  max_phrase_length: 4
+  initial_quality: 1
+
+punctuator:
+  import_preset: default
+
+key_binder:
+  import_preset: default
+
+recognizer:
+  import_preset: default

@@ -1,0 +1,5 @@
+patch:
+  schema_list:
+    - schema: flypy_yinxing
+  menu:
+    page_size: 8              # 手机屏窄，一页 8 个候选
