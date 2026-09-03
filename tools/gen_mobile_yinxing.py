@@ -77,6 +77,89 @@ def main(argv):
         rows.append((text, code, int(w)))
         nword += 1
 
+    # ── 简码 ──────────────────────────────────────────────────────────
+    # 一简/二简是日常输入的主路径，不是锦上添花：没有它每个字都要打满四码。
+    #
+    # 来源优先级：
+    #   1. 使用者自己在 Mac 上按 Ctrl+t 定下来的那套（真实肌肉记忆）
+    #      —— 若该词条已从词库进来，则**提权**而非跳过（否则 pin 等于白按）
+    #   2. 其余码位按权重自动补，且限定类型：
+    #      一简只取单字、二简只取单字或二字词（四字词放在二简位没有意义）
+    MINE, AUTO1, AUTO2 = 99999999, 20000000, 10000000
+
+    idx = {}                                  # (text, code) -> rows 下标
+    for i, (t, c, _w) in enumerate(rows):
+        idx[(t, c)] = i
+    short = []
+    nmine = nboost = 0
+
+    def claim(code, text, weight):
+        """加一条简码；若该 (词,码) 已存在则提权。"""
+        nonlocal nboost
+        k = (text, code)
+        if k in idx:                          # 已在词库里 → 提权
+            t, c, w = rows[idx[k]]
+            if weight > w:
+                rows[idx[k]] = (t, c, weight)
+                nboost += 1
+            return True
+        if k in seen:
+            return False
+        seen.add(k)
+        short.append((text, code, weight))
+        return True
+
+    def read_pins():
+        pin = os.path.join(ROOT, 'lua/pin_word_record.lua')
+        if not os.path.exists(pin):
+            return
+        src = io.open(pin, encoding='utf-8').read()
+        for m in re.finditer(r'\["([^"]+)"\]\s*=\s*\{([^}]*)\}', src):
+            code = m.group(1)
+            if not re.fullmatch(r'[a-z]{1,4}', code):
+                continue                       # 跳过 ; / 之类的标点键
+            for i, t in enumerate(re.findall(r'"([^"]*)"', m.group(2))):
+                if t:
+                    yield code, t, MINE - i
+
+    def read_custom_phrase():
+        cph = os.path.join(ROOT, 'custom_phrase.txt')
+        if not os.path.exists(cph):
+            return
+        for line in io.open(cph, encoding='utf-8'):
+            if line.startswith('#'):
+                continue
+            parts = line.rstrip('\n').split('\t')
+            if len(parts) >= 2 and re.fullmatch(r'[a-z]{1,4}', parts[1]):
+                yield parts[1], parts[0], MINE
+
+    for code, text, w in list(read_pins()) + list(read_custom_phrase()):
+        if claim(code, text, w):
+            nmine += 1
+
+    # 自动补：按类型限定，只填没被占用的码位
+    taken = {c for _, c, _ in short} | {c for _, c, _ in rows if len(c) < 4}
+    best = {}
+    for t, c, w in rows:
+        if len(c) != 4:
+            continue
+        n_ch = len(t)
+        for n, ok in ((1, n_ch == 1), (2, n_ch <= 2)):
+            if not ok:
+                continue
+            pre = c[:n]
+            if pre in taken:
+                continue
+            if pre not in best or w > best[pre][1]:
+                best[pre] = (t, w)
+    nauto = 0
+    for pre, (t, _w) in best.items():
+        if claim(pre, t, AUTO1 if len(pre) == 1 else AUTO2):
+            nauto += 1
+
+    rows.extend(short)
+    print('  简码：自建 %d 条（其中提权 %d）+ 自动补 %d 条' % (nmine, nboost, nauto))
+
     rows.sort(key=lambda r: (-r[2], r[1]))
 
     with io.open(OUT, 'w', encoding='utf-8') as f:
