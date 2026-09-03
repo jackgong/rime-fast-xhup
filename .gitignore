@@ -24,3 +24,8 @@ en_dicts/en_custom.dict.yaml
 
 # 移动端方案的生成物（tools/gen_mobile_yinxing.py 可重建）
 mobile/flypy_yinxing.dict.yaml
+
+# 我的英文自造词要进版本控制。
+# 上游忽略它（第 23 行）是为了忽略作者自己的那份；上游既然不提交它，
+# 这条否定规则就不会与上游冲突。
+!en_dicts/en_custom.dict.yaml
