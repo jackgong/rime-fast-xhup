@@ -157,6 +157,28 @@ def main(argv):
         if claim(pre, t, AUTO1 if len(pre) == 1 else AUTO2):
             nauto += 1
 
+    # ── 英文自造词 ────────────────────────────────────────────────────
+    # 手机上打的英文基本都是技术专有名词（Datadog / ghostty / kubectl），
+    # 恰恰是通用英文词表里没有、只有自造词库里才有的。所以并这一份就够。
+    #
+    # 代价实测：英文长词让 18 个中文四码码位变成「可延长」而失去自动上屏，
+    # 占 82967 个码位的 0.02% —— 因为音形码遵循双拼拼写规律，英文不遵循，
+    # 四字母前缀几乎不重叠。可以忽略。
+    EN_W = 15000000            # 高于自动补简码(1000万)，低于自建简码(1亿)
+    enc = os.path.join(ROOT, 'en_dicts/en_custom.dict.yaml')
+    nen = 0
+    if os.path.exists(enc):
+        for line in io.open(enc, encoding='utf-8'):
+            m = re.match(r'^(\S+)\t(\S+)\t(\d+)\s*$', line)
+            if not m:
+                continue
+            text, code = m.group(1), m.group(2).lower()
+            if not re.fullmatch(r'[a-z]+', code):
+                continue           # 跳过含 / 之类的码，speller 里没有这些键
+            if claim(code, text, EN_W):
+                nen += 1
+    print('  英文自造词 %d 条（源自 en_dicts/en_custom.dict.yaml）' % nen)
+
     rows.extend(short)
     print('  简码：自建 %d 条（其中提权 %d）+ 自动补 %d 条' % (nmine, nboost, nauto))
 

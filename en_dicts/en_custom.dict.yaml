@@ -162,3 +162,5 @@ shader	shader	100000
 shell	shell	100000
 Datadog	datadog	100000
 Datadog	dd	100000
+kubectl	kubectl	100000
+kubectl	kc	100000
