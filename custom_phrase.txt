@@ -14,14 +14,19 @@
 ## 标点（自定义两字母码，避免 Shift 组合）
 ## 规则：右手 o + 左手字母（q w e r t a s d f g z x c v b），保证左右手分工。
 ## 已占：oa od of ob os ow    可用：oc oe og oq or ot ov ox oz
-## 箭头家族：of = → (forward)，ob = ← (back)，f/b 都在左手
+## 箭头家族：of = →/->，ob = ←/<-（f=forward, b=back，都在左手）
+##   同码双候选：全角箭头在前（写作用），ASCII 在后（按 ; 选第二个）。
+##   原因：→ ← 的 East Asian Width 是 Ambiguous，终端与字体对宽度判断
+##   可能不一致，导致光标错位、表格错乱；代码和终端里用 -> 永不出错。
 ## 加新码前先查冲突：python3 tools/check_code.py <码>
 、	od	1
 /	oa	1
 ？	ow	1
 ……	os	1
-→	of	1
-←	ob	1
+→	of	2
+->	of	1
+←	ob	2
+<-	ob	1
 
 ## 手指行程优化（码与音无关，纯为省手指）
 ## 什么: 标准简拼 um 是右手食指上下两趟, 改绑左右手分工的 sm
