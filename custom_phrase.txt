@@ -13,13 +13,15 @@
 
 ## 标点（自定义两字母码，避免 Shift 组合）
 ## 规则：右手 o + 左手字母（q w e r t a s d f g z x c v b），保证左右手分工。
-## 已占：oa od os ow of    可用：ob oc oe og oq or ot ov ox oz
+## 已占：oa od of ob os ow    可用：oc oe og oq or ot ov ox oz
+## 箭头家族：of = → (forward)，ob = ← (back)，f/b 都在左手
 ## 加新码前先查冲突：python3 tools/check_code.py <码>
 、	od	1
 /	oa	1
 ？	ow	1
 ……	os	1
 →	of	1
+←	ob	1
 
 ## 手指行程优化（码与音无关，纯为省手指）
 ## 什么: 标准简拼 um 是右手食指上下两趟, 改绑左右手分工的 sm
