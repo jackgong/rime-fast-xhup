@@ -131,7 +131,10 @@ def main(argv):
                 continue
             parts = line.rstrip('\n').split('\t')
             if len(parts) >= 2 and re.fullmatch(r'[a-z]{1,4}', parts[1]):
-                yield parts[1], parts[0], MINE
+                # 保留 custom_phrase 里的相对顺序：同码多词时（如 of = →/->）
+                # 第三列权重决定先后，拉平会让手机上的候选顺序变得不确定
+                w = int(parts[2]) if len(parts) > 2 and parts[2].isdigit() else 1
+                yield parts[1], parts[0], MINE - 1000 + w
 
     for code, text, w in list(read_pins()) + list(read_custom_phrase()):
         if claim(code, text, w):
