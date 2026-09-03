@@ -18,11 +18,18 @@
 ##   同码双候选：全角箭头在前（写作用），ASCII 在后（按 ; 选第二个）。
 ##   原因：→ ← 的 East Asian Width 是 Ambiguous，终端与字体对宽度判断
 ##   可能不一致，导致光标错位、表格错乱；代码和终端里用 -> 永不出错。
+## 同码双候选的原则：全角在前（写作），ASCII 在后（代码/终端，按 ; 取）。
+##   已这样处理：of=→/->  ob=←/<-  os=……/...  ow=？/?
+##   判据是 East Asian Width：A(Ambiguous) 的字符在等宽环境会错位，
+##   必须配 ASCII 后备；W(全角) 不歧义，汉字类无需处理。
+##   审计命令见本次会话记录（unicodedata.east_asian_width）。
 ## 加新码前先查冲突：python3 tools/check_code.py <码>
 、	od	1
 /	oa	1
-？	ow	1
-……	os	1
+？	ow	2
+?	ow	1
+……	os	2
+...	os	1
 →	of	2
 ->	of	1
 ←	ob	2
