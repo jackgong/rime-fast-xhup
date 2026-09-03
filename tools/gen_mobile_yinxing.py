@@ -130,6 +130,8 @@ def main(argv):
             if line.startswith('#'):
                 continue
             parts = line.rstrip('\n').split('\t')
+            if '<br>' in parts[0]:
+                continue          # <br>→换行 靠 lua/flypy_fixed.lua，移动端无 lua
             if len(parts) >= 2 and re.fullmatch(r'[a-z]{1,4}', parts[1]):
                 # 保留 custom_phrase 里的相对顺序：同码多词时（如 of = →/->）
                 # 第三列权重决定先后，拉平会让手机上的候选顺序变得不确定
